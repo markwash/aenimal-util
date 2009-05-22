@@ -5,13 +5,15 @@ AC_PROG_LIBTOOL
 AC_PROG_CC
 AC_CHECK_HEADERS([stdint.h])
 AC_CHECK_HEADERS([stdlib.h])
-AM_PATH_CHECK()
 AC_TYPE_UINT32_T
+PKG_CHECK_MODULES([CHECK], [check >= 0.9.4])
 AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_FILES([
   Makefile
   src/Makefile
   src/perm/Makefile
+  test/Makefile
+  test/perm/Makefile
 ])
 AC_OUTPUT
