@@ -13,6 +13,7 @@ AC_CONFIG_FILES([
   Makefile
   src/Makefile
   src/perm/Makefile
+  src/rand/Makefile
   test/Makefile
   test/perm/Makefile
 ])
