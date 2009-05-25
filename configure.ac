@@ -19,5 +19,6 @@ AC_CONFIG_FILES([
   src/rand/Makefile
   test/Makefile
   test/perm/Makefile
+  test/rand/Makefile
 ])
 AC_OUTPUT

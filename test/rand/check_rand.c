@@ -12,7 +12,7 @@ Suite *perm_suite(void) {
 	Suite *s = suite_create("rand");
 
 	TCase *tc_core = tcase_create("core");
-	tcase_add_test(tc_core, test_rand_init);
+	tcase_add_test(tc_core, test_rand_blah);
 
 	suite_add_tcase(s, tc_core);
 
