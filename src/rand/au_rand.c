@@ -43,6 +43,9 @@ uint32_t au_rand_uint32() {
 	return(Q[i]=r-x);
 }
 uint32_t au_rand_range(uint32_t start, uint32_t len) {
+	if (len == 0) {
+		return start;
+	}
 	return start + au_rand_uint32() % len;
 }
 double au_rand_double() {
