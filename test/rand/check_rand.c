@@ -58,9 +58,28 @@ START_TEST(test_rand_compare) {
 	double da = above_wt / (double) iter / 0xffffffff;
 	double db = below_wt / (double) iter / 0xffffffff;
 	double delta = da > db ? da - db : db - da;
-	printf("a = %llu, b = %llu, da = %f, db = %f, delta = %f\n",
-		above_wt, below_wt, da, db, delta);
 	fail_unless(delta < 0.01, NULL);
+} END_TEST
+uint32_t extract_bits(uint32_t num, uint32_t bits[], size_t len) {
+	uint32_t result = 0;
+	int i;
+	for (i = 0; i < len; i++) {
+			i, bits[i], 1 << bits[i], num & (1 << bits[i]), 1 << i);
+		if ((num & (1 << bits[i])) != 0) {
+			result += 1 << i;
+		}
+	}
+	return result;
+}
+START_TEST(test_extract_bits) {
+	uint32_t bits[] = {0, 1, 2};
+	fail_unless(extract_bits(0xffffffff, bits, 3) == 7, NULL);
+	fail_unless(extract_bits(0x00000000, bits, 3) == 0, NULL);
+	uint32_t bits2[] = {0, 16, 31};
+	fail_unless(extract_bits(0xffffffff, bits2, 3) == 7, NULL);
+	fail_unless(extract_bits(0xffff0000, bits2, 3) == 6, NULL);
+	fail_unless(extract_bits(0x000f000f, bits2, 3) == 3, NULL);
+	fail_unless(extract_bits(0x00000000, bits2, 3) == 0, NULL);
 } END_TEST
 
 Suite *perm_suite(void) {
@@ -72,6 +91,7 @@ Suite *perm_suite(void) {
 	tcase_add_test(tc_core, test_rand_double);
 	tcase_add_test(tc_core, test_rand_range);
 	tcase_add_test(tc_core, test_rand_compare);
+	tcase_add_test(tc_core, test_extract_bits);
 
 	TCase *tc_edge = tcase_create("edge");
 	tcase_add_test(tc_edge, test_rand_range_edge);
