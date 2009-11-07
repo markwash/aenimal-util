@@ -10,7 +10,7 @@ void au_perm_init(uint32_t *perm, uint32_t size) {
 		perm[i] = i;
 	}
 }
-void au_perm_next(uint32_t *perm, uint32_t size, uint32_t max) {
+int au_perm_next(uint32_t *perm, uint32_t size, uint32_t max) {
 	assert(size <= max);
 	uint32_t i, pos;
 	for (i = 0; i < size; i++) {
@@ -24,10 +24,10 @@ void au_perm_next(uint32_t *perm, uint32_t size, uint32_t max) {
 		for (i = 0; i < size; i++) {
 			perm[i] = i;
 		}
-		return;
+		return 0;
 	}
 	for (i = 1; i < size - pos; i++) {
 			perm[i + pos] = perm[pos] + i;
 	}
-	return;
+	return 1;
 }
