@@ -15,6 +15,7 @@ AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_FILES([
   Makefile
   src/Makefile
+  src/dist/Makefile
   src/perm/Makefile
   src/rand/Makefile
   test/Makefile

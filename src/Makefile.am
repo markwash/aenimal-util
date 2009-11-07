@@ -1,1 +1,1 @@
-SUBDIRS = perm rand
+SUBDIRS = dist perm rand
