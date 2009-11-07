@@ -1,7 +1,9 @@
 #include <check.h>
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include "../../src/rand/au_rand.h"
+#include "../../src/perm/au_perm.h"
 
 #include <stdint.h>
 
@@ -40,7 +42,7 @@ START_TEST(test_rand_range_edge) {
 	fail_unless(au_rand_range(10, 0) == 10, NULL);
 } END_TEST
 START_TEST(test_rand_compare) {
-	uint32_t iter = 10000;
+	uint32_t iter = 100000;
 	uint64_t above_wt = 0, below_wt = 0;
 	uint32_t r, p;
 	int i;
@@ -64,7 +66,6 @@ uint32_t extract_bits(uint32_t num, uint32_t bits[], size_t len) {
 	uint32_t result = 0;
 	int i;
 	for (i = 0; i < len; i++) {
-			i, bits[i], 1 << bits[i], num & (1 << bits[i]), 1 << i);
 		if ((num & (1 << bits[i])) != 0) {
 			result += 1 << i;
 		}
@@ -81,6 +82,52 @@ START_TEST(test_extract_bits) {
 	fail_unless(extract_bits(0x000f000f, bits2, 3) == 3, NULL);
 	fail_unless(extract_bits(0x00000000, bits2, 3) == 0, NULL);
 } END_TEST
+START_TEST(test_even_dist_across_bits3) {
+	uint32_t bits[3];
+	uint32_t counts[8];
+	uint32_t initial_iter = 2048;
+	uint32_t iter;
+	uint32_t r;
+	double p = 1.0 / 8;
+	double q = 1.0 - p;
+	double portion, max, stdev;
+	int i, j;
+	
+	au_rand_seed_default();
+
+	for (au_perm_init(bits, 3); au_perm_next(bits, 3, 32) == 1; ) {
+
+		for (i = 0; i < 8; i++)
+			counts[i] = 0;
+
+		j = 0;
+		iter = initial_iter;
+		stdev = sqrt(p * q / iter);
+
+		while (1) {
+			
+			for ( ; j < iter; j++) {
+				r = au_rand_uint32();
+				counts[extract_bits(r, bits, 3)] += 1;
+			}
+
+			max = 0.0;
+			for (i = 0; i < 8; i++) {
+				portion = 1.0 * counts[i] / iter;
+				if (portion > max)
+					max = portion;
+			}
+
+			fail_unless(max - p < 5 * stdev);
+
+			if (max - p < 2 * stdev)
+				break;
+
+			iter *= 2;
+			stdev = sqrt(p * q / iter);
+		}
+	}
+} END_TEST
 
 Suite *perm_suite(void) {
 
@@ -90,13 +137,18 @@ Suite *perm_suite(void) {
 	tcase_add_test(tc_core, test_rand_uint32);
 	tcase_add_test(tc_core, test_rand_double);
 	tcase_add_test(tc_core, test_rand_range);
-	tcase_add_test(tc_core, test_rand_compare);
 	tcase_add_test(tc_core, test_extract_bits);
+
+	TCase *tc_long = tcase_create("long");
+	tcase_add_test(tc_long, test_even_dist_across_bits3);
+	tcase_add_test(tc_long, test_rand_compare);
+	tcase_set_timeout(tc_long, 10);
 
 	TCase *tc_edge = tcase_create("edge");
 	tcase_add_test(tc_edge, test_rand_range_edge);
 
 	suite_add_tcase(s, tc_core);
+	suite_add_tcase(s, tc_long);
 	suite_add_tcase(s, tc_edge);
 
 	return s;
