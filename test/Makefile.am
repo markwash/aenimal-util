@@ -1,1 +1,1 @@
-SUBDIRS = perm rand
+SUBDIRS = basic perm rand
