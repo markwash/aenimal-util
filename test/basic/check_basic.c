@@ -25,6 +25,11 @@ START_TEST(test_basic_power_base_zero) {
 	for (i = 1; i < 20; i++)
 		fail_unless(au_basic_power(0.0, i) == 0.0, NULL);
 } END_TEST
+START_TEST(test_basic_power_huge_exponent) {
+	double diff;
+	diff = au_basic_power(0.9999, 10000) - 0.36786;
+	fail_unless(diff < 0.00001 && -diff < 0.00001, NULL);
+} END_TEST
 START_TEST(test_basic_power_one) {
 	double d;
 	for (d = 0.1; d < 10; d += 0.33) 
@@ -55,6 +60,7 @@ Suite *basic_suite(void) {
 	TCase *tc_power_core = tcase_create("power_core");
 	tcase_add_test(tc_power_core, test_basic_power);
 	tcase_add_test(tc_power_core, test_basic_power_lto);
+	tcase_add_test(tc_power_core, test_basic_power_huge_exponent);
 
 	TCase *tc_power_edge = tcase_create("power_edge");
 	tcase_add_test(tc_power_edge, test_basic_power_base_one);
