@@ -22,23 +22,56 @@ START_TEST(test_basic_power_base_one) {
 } END_TEST
 START_TEST(test_basic_power_base_zero) {
 	uint32_t i;
-	for (i = 0; i < 20; i++)
+	for (i = 1; i < 20; i++)
 		fail_unless(au_basic_power(0.0, i) == 0.0, NULL);
+} END_TEST
+START_TEST(test_basic_power_one) {
+	double d;
+	for (d = 0.1; d < 10; d += 0.33) 
+		fail_unless(au_basic_power(d, 1) == d, NULL);
+} END_TEST
+START_TEST(test_basic_power_zero) {
+	double d;
+	for (d = 0.1; d < 10; d += 0.33) 
+		fail_unless(au_basic_power(d, 0) == 1.0, NULL);
+} END_TEST
+START_TEST(test_basic_factorial) {
+	fail_unless(au_basic_factorial(1) == 1.0, NULL);
+	fail_unless(au_basic_factorial(2) == 2.0, NULL);
+	fail_unless(au_basic_factorial(3) == 6.0, NULL);
+	fail_unless(au_basic_factorial(4) == 24.0, NULL);
+	fail_unless(au_basic_factorial(5) == 120.0, NULL);
+	fail_unless(au_basic_factorial(6) == 720.0, NULL);
+	fail_unless(au_basic_factorial(7) == 5040.0, NULL);
+} END_TEST
+START_TEST(test_basic_factorial_zero) {
+	fail_unless(au_basic_factorial(0) == 1.0, NULL);
 } END_TEST
 
 Suite *basic_suite(void) {
 
 	Suite *s = suite_create("basic");
 
-	TCase *tc_core = tcase_create("core");
-	tcase_add_test(tc_core, test_basic_power);
-	tcase_add_test(tc_core, test_basic_power_lto);
+	TCase *tc_power_core = tcase_create("power_core");
+	tcase_add_test(tc_power_core, test_basic_power);
+	tcase_add_test(tc_power_core, test_basic_power_lto);
 
-	TCase *tc_edge = tcase_create("edge");
-	tcase_add_test(tc_edge, test_basic_power_base_one);
-	tcase_add_test(tc_edge, test_basic_power_base_zero);
+	TCase *tc_power_edge = tcase_create("power_edge");
+	tcase_add_test(tc_power_edge, test_basic_power_base_one);
+	tcase_add_test(tc_power_edge, test_basic_power_base_zero);
+	tcase_add_test(tc_power_edge, test_basic_power_one);
+	tcase_add_test(tc_power_edge, test_basic_power_zero);
 
-	suite_add_tcase(s, tc_core);
+	TCase *tc_factorial_core = tcase_create("factorial_core");
+	tcase_add_test(tc_factorial_core, test_basic_factorial);
+
+	TCase *tc_factorial_edge = tcase_create("factorial_edge");
+	tcase_add_test(tc_factorial_edge, test_basic_factorial_zero);
+
+	suite_add_tcase(s, tc_power_core);
+	suite_add_tcase(s, tc_power_edge);
+	suite_add_tcase(s, tc_factorial_core);
+	suite_add_tcase(s, tc_factorial_edge);
 
 	return s;
 }
