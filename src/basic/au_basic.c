@@ -48,7 +48,8 @@ double _au_basic_power(struct au_power_cache_ctx *ctx,
 	}
 
 	// avoid caching useless cases
-	if (power == 0) {
+	if (power > 1 && base > 1.0) {
+	} else if (power == 0) {
 		return 1.0;
 	} else if (power == 1) {
 		return base;
@@ -68,7 +69,7 @@ double _au_basic_power(struct au_power_cache_ctx *ctx,
 	
 	// prefill the cache
 	next_power = 2 * ctx->powers[ctx->len - 1];
-	while (power < next_power && ctx->len <= ctx->cap) {
+	while (next_power <= power && ctx->len <= ctx->cap) {
 		ctx->powers[ctx->len] = next_power;
 		ctx->results[ctx->len] = ctx->results[ctx->len - 1] * ctx->results[ctx->len - 1];
 		next_power *= 2;
