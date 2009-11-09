@@ -77,17 +77,16 @@ double _au_basic_power(struct au_power_cache_ctx *ctx,
 	}
 
 	// calculate the requested power
-	for (i = 0; i < ctx->len - 1; i++)
-		if (ctx->powers[i + 1] > next_power)
-			break;
-
 	result = 1.0;
-	while (power != 0) {
-		if (ctx->powers[i] <= power) {
+	while (power >= ctx->powers[ctx->len - 1]) {
+		result *= ctx->results[ctx->len - 1];
+		power -= ctx->powers[ctx->len - 1];
+	}
+
+	for (i = 0; power > 0 && i < ctx->len - 1; i++) {
+		if (power & ctx->powers[i]) {
 			result *= ctx->results[i];
 			power -= ctx->powers[i];
-		} else {
-			i -= 1;
 		}
 	}
 
